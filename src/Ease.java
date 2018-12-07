@@ -15,17 +15,9 @@ public class Ease extends JPanel implements KeyListener, MouseListener {
     int width;
     int trueHeight;
     int trueWidth;
-    boolean loop;
     Graphics2D g2d;
-    Color red = Color.red;
-    Color green = Color.green;
-    Color blue = Color.blue;
-    Color gray = Color.gray;
-    Color white = Color.white;
-    Color black = Color.black;
-    Color cyan = Color.cyan;
-    Color yellow = Color.yellow;
-    public Ease(int width, int height, int res) throws InterruptedException {
+    int refreshRate;
+    public Ease(int width, int height, int res, int refreshRate) throws InterruptedException {
         JFrame frame = new JFrame("Game");
         frame.add(this);
         frame.addKeyListener(this);
@@ -41,16 +33,18 @@ public class Ease extends JPanel implements KeyListener, MouseListener {
         this.trueHeight = height;
         this.trueWidth = width;
         this.res = res;
-        this.loop = true;
-        while(true) {
-            Thread.sleep(100);
-            repaint();
-        }
+        this.refreshRate = refreshRate;
     }
     @Override
     public void paintComponent(Graphics g) {
         g2d = (Graphics2D)g;
         paint();
+        try {
+            Thread.sleep(refreshRate);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        repaint();
     }
     public void paint() {
 
@@ -63,40 +57,10 @@ public class Ease extends JPanel implements KeyListener, MouseListener {
         }
     }
     public void pixel(int x, int y, Color color) {
-        if(loop) {
-            if (x > width) {
-                x %= width;
-            } else if (x < 0) {
-                x = width - (-x%width);
-            }
-            if (y > height) {
-                y %= height;
-            } else if (y < 0) {
-                y = height - (-y%height);
-            }
-        }
         g2d.setColor(color);
         g2d.fillRect(x*res,y*res,res,res);
     }
     public void rect(int x, int y, int w, int h, Color color) {
-        if(loop) {
-            if (x > width) {
-                x %= width;
-            } else if (x < 0) {
-                x = width + x;
-            }
-            if (y > height) {
-                y %= height;
-            } else if (y < 0) {
-                y = height - (-y%height);
-            }
-            if (x + w > width) {
-                rect(x - width, y, w, h, color);
-            }
-            if (y + h > height) {
-                rect(x, y - height, w, h, color);
-            }
-        }
         g2d.setColor(color);
         g2d.fillRect(x*res, y*res, w*res, h*res);
     }
